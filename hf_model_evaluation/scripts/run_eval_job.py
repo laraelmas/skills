@@ -34,6 +34,7 @@ def create_eval_job(
     task: str,
     hardware: str = "cpu-basic",
     hf_token: Optional[str] = None,
+    limit: Optional[int] = None,
 ) -> None:
     """
     Submit an evaluation job using the Hugging Face Jobs CLI.
@@ -55,7 +56,7 @@ def create_eval_job(
         str(SCRIPT_PATH),
         "--flavor",
         hardware,
-        "--secret",
+        "--secrets",
         f"HF_TOKEN={token}",
         "--",
         "--model",
@@ -63,6 +64,9 @@ def create_eval_job(
         "--task",
         task,
     ]
+
+    if limit:
+        cmd.extend(["--limit", str(limit)])
 
     print("Executing:", " ".join(cmd))
 
@@ -78,6 +82,7 @@ def main() -> None:
     parser.add_argument("--model", required=True, help="Model ID (e.g. Qwen/Qwen3-0.6B)")
     parser.add_argument("--task", required=True, help="Inspect task (e.g. mmlu, gsm8k)")
     parser.add_argument("--hardware", default="cpu-basic", help="Hardware flavor (e.g. t4-small, a10g-small)")
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of samples to evaluate")
 
     args = parser.parse_args()
 
@@ -85,6 +90,7 @@ def main() -> None:
         model_id=args.model,
         task=args.task,
         hardware=args.hardware,
+        limit=args.limit,
     )
 
 

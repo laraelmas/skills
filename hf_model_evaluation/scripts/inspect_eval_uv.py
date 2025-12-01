@@ -2,6 +2,8 @@
 # requires-python = ">=3.10"
 # dependencies = [
 #     "inspect-ai>=0.3.0",
+#     "inspect-evals",
+#     "openai",
 # ]
 # ///
 
@@ -21,6 +23,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Inspect-ai job runner")
     parser.add_argument("--model", required=True, help="Model ID on Hugging Face Hub")
     parser.add_argument("--task", required=True, help="inspect-ai task to execute")
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of samples to evaluate")
     args = parser.parse_args()
 
     # Ensure downstream libraries can read the token passed as a secret
@@ -34,10 +37,19 @@ def main() -> None:
         "eval",
         args.task,
         "--model",
-        f"hf/{args.model}",
+        f"hf-inference-providers/{args.model}",
         "--log-level",
         "info",
+        # Reduce batch size to avoid OOM errors (default is 32)
+        "--max-connections",
+        "1",
+        # Set a small positive temperature (HF doesn't allow temperature=0)
+        "--temperature",
+        "0.001",
     ]
+
+    if args.limit:
+        cmd.extend(["--limit", str(args.limit)])
 
     try:
         subprocess.run(cmd, check=True)
@@ -49,4 +61,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
