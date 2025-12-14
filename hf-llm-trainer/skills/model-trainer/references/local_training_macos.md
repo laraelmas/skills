@@ -1,6 +1,6 @@
-# Local training on macOS (Apple Silicon / Intel)
+# Local training on macOS (Apple Silicon)
 
-This reference explains how to run **small fine-tuning runs locally on a Mac** (best for smoke tests and quick iteration).
+This reference explains how to run **small fine-tuning jobs locally on a Mac** (best for smoke tests and quick iteration).
 
 > **Clarification:** This is not about "training on phone." The workflow is: **train locally or cloud → export/quantize → run inference on-device**.
 
@@ -23,6 +23,27 @@ ls outputs/local-lora/  # should contain adapter weights (*.safetensors) + adapt
 ```
 
 > **Note:** If you hit `TypeError` or version conflicts, see [troubleshooting.md](troubleshooting.md) for pinning guidance.
+
+<details>
+<summary><strong>Recommended requirements.txt for reproducibility</strong></summary>
+
+```txt
+torch>=2.2,<3.0
+transformers>=4.40,<5.0
+trl>=0.12,<1.0
+peft>=0.10,<1.0
+datasets>=2.18,<3.0
+accelerate>=0.28,<1.0
+safetensors>=0.4,<1.0
+huggingface_hub>=0.21,<1.0
+```
+
+Install with:
+```bash
+pip install -r requirements.txt
+```
+
+</details>
 
 ## Agent Decision Rubric
 
@@ -207,7 +228,8 @@ def get_dtype():
     """
     Get optimal dtype for stability.
     - fp32 is the safest default for MPS
-    - bf16 may work on newer Apple Silicon but isn't guaranteed
+    - bf16 works on M1 Pro/Max/Ultra and all M2/M3/M4 chips (PyTorch 2.1+)
+    - bf16 is NOT supported on base M1 or Intel Macs
     - fp16 often causes NaN issues on MPS
     """
     return torch.float32
@@ -485,6 +507,28 @@ PYTORCH_ENABLE_MPS_FALLBACK=1 python train_lora_sft.py
 
 This can be slower but usually prevents crashes.
 
+### Monitoring GPU memory usage
+To monitor MPS memory during training:
+
+**Activity Monitor (GUI):**
+1. Open Activity Monitor → Window → GPU History
+2. Watch "Memory Used" during training
+
+**Command line:**
+```bash
+# Monitor GPU power and memory (requires sudo)
+sudo powermetrics --samplers gpu_power -i 1000
+
+# Or use this Python snippet during training:
+python -c "import torch; print(f'MPS allocated: {torch.mps.driver_allocated_memory() / 1e9:.2f} GB')"
+```
+
+**In your training script**, you can add periodic memory logging:
+```python
+if torch.backends.mps.is_available():
+    print(f"MPS memory: {torch.mps.driver_allocated_memory() / 1e9:.2f} GB")
+```
+
 ### Out of memory (OOM)
 If training crashes or your Mac becomes unstable:
 - Reduce `MAX_SEQ_LENGTH` (1024 → 768 → 512)
@@ -504,9 +548,8 @@ If loss becomes `nan` or suddenly explodes:
 - Lower learning rate (2e-4 → 1e-4 → 5e-5)
 - Reduce `MAX_SEQ_LENGTH`
 
-### Very slow on Intel Macs
-Intel Macs don't have MPS acceleration, so training will be CPU-only.
-Use local only for tiny smoke tests, then move real runs to HF Jobs/cloud.
+### Intel Macs (not supported)
+Intel Macs don't have MPS acceleration, so training would be CPU-only and impractically slow. This guide has not been tested on Intel Macs. If you're on Intel, use HF Jobs or cloud GPU for all training.
 
 ### LoRA target module mismatch
 If you see "module not found" errors, the model architecture uses different module names.
@@ -530,6 +573,27 @@ for name, _ in model.named_modules():
 
 ### TRL version differences
 The script uses `SFTConfig` + `processing_class` (TRL ≥0.12). If you hit `TypeError` on arguments like `max_seq_length` vs `max_length`, or `dataset_text_field` issues, check your TRL version and see [troubleshooting.md](troubleshooting.md) for API mismatches.
+
+## Alternative: MLX for Apple Silicon
+
+[MLX](https://github.com/ml-explore/mlx) is Apple's machine learning framework optimized for Apple Silicon. While this guide focuses on PyTorch + MPS (for compatibility with HF ecosystem), MLX can offer better performance on Mac for some workflows.
+
+**When to consider MLX:**
+- You're doing inference-heavy workflows on Apple Silicon
+- You want tighter Metal/GPU integration
+- You're building Mac-native ML applications
+
+**MLX limitations for this skill:**
+- Smaller ecosystem than PyTorch/HF
+- Not all HF models have MLX ports
+- Training APIs are less mature than TRL/PEFT
+- Harder to transfer workflows to cloud GPU
+
+**Resources:**
+- [mlx-lm](https://github.com/ml-explore/mlx-lm/tree/main/mlx_lm) – LLM inference and fine-tuning with MLX
+- [MLX documentation](https://ml-explore.github.io/mlx/)
+
+For this skill's workflow (local validation → HF Jobs), PyTorch + MPS remains the recommended path for consistency.
 
 ## See Also
 
