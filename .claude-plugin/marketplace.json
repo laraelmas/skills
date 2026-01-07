@@ -4,39 +4,44 @@
     "name": "Hugging Face"
   },
   "metadata": {
-    "description": "Agent Context Protocol (ACP) skills for AI/ML tasks including dataset creation, model training, evaluation, and research paper publishing on Hugging Face Hub",
+    "description": "Agent Skills for AI/ML tasks including dataset creation, model training, evaluation, and research paper publishing on Hugging Face Hub",
     "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "model-trainer",
-      "source": "./hf-trainer",
-      "description": "This skill should be used when users want to train or fine-tune language models using TRL (Transformer Reinforcement Learning) on Hugging Face Jobs infrastructure. Covers SFT, DPO, GRPO and reward modeling training methods, plus GGUF conversion for local deployment. Includes guidance on the TRL Jobs package, UV scripts with PEP 723 format, dataset preparation and validation, hardware selection, cost estimation, Trackio monitoring, Hub authentication, and model persistence. Should be invoked for tasks involving cloud GPU training, GGUF conversion, or when users mention training on Hugging Face Jobs without local GPU setup."
+      "name": "hugging-face-model-trainer",
+      "source": "./skills/hugging-face-model-trainer",
+      "description": "Train or fine-tune language models using TRL on Hugging Face Jobs infrastructure. Covers SFT, DPO, GRPO and reward modeling training methods, plus GGUF conversion for local deployment. Includes hardware selection, cost estimation, Trackio monitoring, and Hub persistence."
     },
     {
       "name": "hugging-face-paper-publisher",
-      "source": "./hf-papers",
+      "source": "./skills/hugging-face-paper-publisher",
       "description": "Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles."
     },
     {
       "name": "hugging-face-datasets",
-      "source": "./hf-datasets",
-      "description": "Create and manage datasets on Hugging Face Hub. Supports initializing repos, defining configs/system prompts, and streaming row updates. Designed to work alongside HF MCP server for comprehensive dataset workflows."
+      "source": "./skills/hugging-face-datasets",
+      "description": "Create and manage datasets on Hugging Face Hub. Supports initializing repos, defining configs/system prompts, streaming row updates, and SQL-based dataset querying/transformation."
     },
     {
-      "name": "hugging-face-evaluation-manager",
-      "source": "./hf-evaluation",
-      "description": "Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content and importing scores from Artificial Analysis API. Works with the model-index metadata format."
+      "name": "hugging-face-evaluation",
+      "source": "./skills/hugging-face-evaluation",
+      "description": "Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content, importing scores from Artificial Analysis API, and running custom evaluations with vLLM/lighteval."
     },
     {
-      "name": "hf-tool-builder",
-      "source": "./hf-tool-builder",
-      "description": "Use this skill when the user wants to build tool/scripts or achieve a task where using data from the Hugging Face API would help. This is especially useful when chaining or combining API calls or the task will be repeated/automated. This Skill creates a reusable script to fetch, enrich or process data."
+      "name": "hugging-face-tool-builder",
+      "source": "./skills/hugging-face-tool-builder",
+      "description": "Build reusable scripts for Hugging Face API operations. Useful for chaining API calls or automating repeated tasks."
     },
     {
-      "name": "hf-cli",
-      "source": "./hf-cli",
-      "description": "Execute Hugging Face Hub operations using the `hf` CLI. Use when the user needs to download models/datasets/spaces, upload files to Hub repositories, create repos, manage local cache, run compute jobs on HF infrastructure, or manage inference endpoints. Covers authentication, file transfers, repository management, cache operations, and cloud compute."
+      "name": "hugging-face-cli",
+      "source": "./skills/hugging-face-cli",
+      "description": "Execute Hugging Face Hub operations using the hf CLI. Download models/datasets, upload files, manage repos, and run cloud compute jobs."
+    },
+    {
+      "name": "hugging-face-jobs",
+      "source": "./skills/hugging-face-jobs",
+      "description": "Run compute jobs on Hugging Face infrastructure. Execute Python scripts, manage scheduled jobs, and monitor job status."
     }
   ]
 }
