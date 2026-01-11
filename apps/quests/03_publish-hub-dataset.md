@@ -8,7 +8,7 @@ The best open source models are built on openly available datasets. By publishin
 
 ## The Skill
 
-Use `hf_dataset_creator/` for this quest. Key capabilities:
+Use `hf-datasets/` for this quest. Key capabilities:
 
 - Initialize dataset repos with proper structure
 - Multi-format support: chat, classification, QA, completion, tabular
@@ -17,7 +17,7 @@ Use `hf_dataset_creator/` for this quest. Key capabilities:
 
 ```bash
 # Quick setup with a template
-python hf_dataset_creator/scripts/dataset_manager.py quick_setup \
+python hf-datasets/scripts/dataset_manager.py quick_setup \
   --repo_id "your-username/dataset-name" --template chat
 ```
 
@@ -34,10 +34,10 @@ python hf_dataset_creator/scripts/dataset_manager.py quick_setup \
 **What counts:** Clean data, clear documentation, proper licensing.
 
 ```bash
-python hf_dataset_creator/scripts/dataset_manager.py init \
+python hf-datasets/scripts/dataset_manager.py init \
   --repo_id "hf-skills/your-dataset-name"
 
-python hf_dataset_creator/scripts/dataset_manager.py add_rows \
+python hf-datasets/scripts/dataset_manager.py add_rows \
   --repo_id "hf-skills/your-dataset-name" \
   --template classification \
   --rows_json "$(cat your_data.json)"
@@ -65,9 +65,9 @@ python hf_dataset_creator/scripts/dataset_manager.py add_rows \
 
 ## Resources
 
-- [SKILL.md](../../hf_dataset_creator/SKILL.md) — Full skill documentation
-- [Templates](../../hf_dataset_creator/templates/) — JSON templates for each format
-- [Examples](../../hf_dataset_creator/examples/) — Sample data and system prompts
+- [SKILL.md](../../hf-datasets/SKILL.md) — Full skill documentation
+- [Templates](../../hf-datasets/templates/) — JSON templates for each format
+- [Examples](../../hf-datasets/examples/) — Sample data and system prompts
 
 ---
 

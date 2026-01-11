@@ -33,7 +33,7 @@ Taking part is simple. We need to get model authors to show evaluation results i
 
 ## The Skill
 
-Use `hf_model_evaluation/` for this quest. Key capabilities:
+Use `hf-evaluation/` for this quest. Key capabilities:
 
 - Extract evaluation tables from existing README content posted by model authors.
 - Import benchmark scores from [Artificial Analysis](https://artificial.com/).
@@ -41,7 +41,7 @@ Use `hf_model_evaluation/` for this quest. Key capabilities:
 - Update model-index metadata in the model card.
 
 >[!NOTE]
-> Take a look at the [SKILL.md](https://github.com/huggingface/skills/blob/main/hf_model_evaluation/SKILL.md) for more details.
+> Take a look at the [SKILL.md](https://github.com/huggingface/skills/blob/main/hf-evaluation/SKILL.md) for more details.
 
 ### Extract Evaluation Tables from README
 
@@ -52,7 +52,7 @@ Use `hf_model_evaluation/` for this quest. Key capabilities:
 The agent will use this script to extract evaluation tables from the model's README.
 
 ```bash
-python hf_model_evaluation/scripts/evaluation_manager.py extract-readme \
+python hf-evaluation/scripts/evaluation_manager.py extract-readme \
   --repo-id "model-author/model-name" --dry-run
 ```
 
@@ -65,7 +65,7 @@ python hf_model_evaluation/scripts/evaluation_manager.py extract-readme \
 The agent will use this script to fetch scores from Artificial Analysis API and add them to the model card.
 
 ```bash
-python hf_model_evaluation/scripts/evaluation_manager.py import-aa \
+python hf-evaluation/scripts/evaluation_manager.py import-aa \
   --creator-slug "anthropic" --model-name "claude-sonnet-4" \
   --repo-id "target/model" --create-pr
 ```
@@ -79,7 +79,7 @@ python hf_model_evaluation/scripts/evaluation_manager.py import-aa \
 The agent will use this script to run the evaluation on HF Jobs infrastructure and update the model card with the results.
 
 ```bash
-HF_TOKEN=$HF_TOKEN hf jobs uv run hf_model_evaluation/scripts/inspect_eval_uv.py \
+HF_TOKEN=$HF_TOKEN hf jobs uv run hf-evaluation/scripts/inspect_eval_uv.py \
   --flavor a10g-small --secret HF_TOKEN=$HF_TOKEN \
   -- --model "meta-llama/Llama-2-7b-hf" --task "mmlu"
 ```
@@ -93,7 +93,7 @@ HF_TOKEN=$HF_TOKEN hf jobs uv run hf_model_evaluation/scripts/inspect_eval_uv.py
 
 ## Resources
 
-- [SKILL.md](../../hf_model_evaluation/SKILL.md) — Full skill documentation
-- [Example Usage](../../hf_model_evaluation/examples/USAGE_EXAMPLES.md) — Worked examples
-- [Metric Mapping](../../hf_model_evaluation/examples/metric_mapping.json) — Standard metric types
+- [SKILL.md](../../hf-evaluation/SKILL.md) — Full skill documentation
+- [Example Usage](../../hf-evaluation/examples/USAGE_EXAMPLES.md) — Worked examples
+- [Metric Mapping](../../hf-evaluation/examples/metric_mapping.json) — Standard metric types
 
